@@ -2,7 +2,7 @@
 import 'enum.dart';
 
 class ApiConfig {
-  static const String devUrl = 'https://zerozec.codenexdev.com/api/v2/';
+  static const String devUrl = 'https://thenexstore.codenexdev.com/api/v2/';
   static const String prodUrl = 'https://thenexstore.codenexdev.com/api/v2/';
 
   static late final Environment _environment;
