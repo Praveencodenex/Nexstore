@@ -112,7 +112,7 @@ class _AddressListBottomSheetState extends State<AddressListBottomSheet> {
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
 
-                              color: isSelected ? kPrimaryColorCardBack : kWhiteColor,
+                              color: isSelected ? kPrimaryColorCardBack : kAppBarColor,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(

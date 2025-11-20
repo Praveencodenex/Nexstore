@@ -87,8 +87,8 @@ class CustomTextField extends StatefulWidget {
     this.enabledBorderColor,
     this.errorBorderColor,
     this.borderRadius = 30.0,
-    this.borderWidth = 0.0,
-    this.focusedBorderWidth = 1.5,
+    this.borderWidth = 0.5,
+    this.focusedBorderWidth = 0.5,
     this.contentPadding,
     this.filled = true,
     this.isDense = false,
@@ -141,7 +141,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         if (widget.label != null) ...[
           Padding(
             padding: const EdgeInsets.only(left: 3.0),
@@ -162,7 +161,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
             controller: _controller,
             focusNode: _focusNode,
             readOnly: widget.readOnly,
-
             enabled: widget.enabled,
             autofocus: widget.autofocus,
             obscureText: widget.obscureText,
@@ -212,24 +210,26 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 horizontal: 20,
                 vertical: 16,
               ),
-              border: _buildBorder(),
-              enabledBorder: _buildBorder(
-                color: kWhiteColor,
-              ),
+              // No border by default (enabled state)
+              border: _buildBorder(showBorder: false),
+              enabledBorder: _buildBorder(showBorder: false),
+              // Show border when focused
               focusedBorder: _buildBorder(
-                color: kWhiteColor,
+                showBorder: true,
+                color: widget.focusedBorderColor ?? kPrimaryColor,
                 width: widget.focusedBorderWidth,
               ),
+              // Show border when error occurs
               errorBorder: _buildBorder(
+                showBorder: true,
                 color: widget.errorBorderColor ?? Colors.red,
               ),
               focusedErrorBorder: _buildBorder(
+                showBorder: true,
                 color: widget.errorBorderColor ?? Colors.red,
                 width: widget.focusedBorderWidth,
               ),
-              disabledBorder: _buildBorder(
-                color: Colors.transparent,
-              ),
+              disabledBorder: _buildBorder(showBorder: false),
             ),
             validator: widget.validator,
             onChanged: widget.onChanged,
@@ -243,12 +243,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
     );
   }
 
-  OutlineInputBorder _buildBorder({Color? color, double? width}) {
+  OutlineInputBorder _buildBorder({
+    bool showBorder = true,
+    Color? color,
+    double? width,
+  }) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(35),
       borderSide: BorderSide(
-        color:  Colors.transparent,
-
+        color: showBorder ? (color ?? kPrimaryColor) : Colors.transparent,
         width: width ?? widget.borderWidth,
       ),
     );

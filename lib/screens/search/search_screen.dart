@@ -76,14 +76,14 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       appBar: const AppBarCommon(title: "Search"),
       backgroundColor: kAppBarColor,
-      floatingActionButton: FloatingActionButton(
+     /* floatingActionButton: FloatingActionButton(
         onPressed: _showLanguageBottomSheet,
         backgroundColor: kPrimaryColor,
         child: const Icon(
           Icons.language,
           color: kWhiteColor,
         ),
-      ),
+      ),*/
       body: SafeArea(
         child: Column(
           children: [
@@ -142,7 +142,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                /*  const SizedBox(width: 12),
                   // Animated Microphone Button
                   Consumer<SearchDataProvider>(
                     builder: (context, provider, _) {
@@ -166,7 +166,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       );
                     },
-                  ),
+                  ),*/
                 ],
               ),
             ),

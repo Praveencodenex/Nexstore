@@ -51,7 +51,7 @@ class _CartScreenState extends State<CartScreen>  {
               success: (cartData) {
                 if (cartData.data.cartItems.isEmpty) {
                   return const NoDataScreen(
-                    title: "Cart is Empty",
+                    title: "Empty Cart",
                     subTitle: "Add items to your cart",
                     icon: emptyError
                   );

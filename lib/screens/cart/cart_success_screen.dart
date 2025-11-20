@@ -540,15 +540,15 @@ class _CartSuccessScreenState extends State<CartSuccessScreen> {
                                     children: [
                                       RichText(
                                         text: TextSpan(
-                                          text: 'You could earn ',
+                                          text: 'Free delivery for orders',
                                           style: bodyStyleStyleB2Bold.copyWith(color: kPrimaryColor),
                                           children: [
                                             TextSpan(
-                                              text: '168 points',
+                                              text: ' ₹300',
                                               style: bodyStyleStyleB2Bold.copyWith(color: kAccentTextAccentOrange),
                                             ),
                                             TextSpan(
-                                              text: ' on this order',
+                                              text: ' and above',
                                               style: bodyStyleStyleB2Bold.copyWith(color: kPrimaryColor),
                                             ),
                                           ],
@@ -556,7 +556,7 @@ class _CartSuccessScreenState extends State<CartSuccessScreen> {
                                       ),
                                       SizedBox(height: getProportionateScreenHeight(4)),
                                       Text(
-                                        'Log in to your account or sign up to gain points!',
+                                        'Add more item to get extra rewards!',
                                         style: bodyStyleStyleB3.copyWith(
                                           color: Colors.black54,
                                           fontSize: getProportionateScreenFont(11),

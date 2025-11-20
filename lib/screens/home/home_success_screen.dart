@@ -145,7 +145,24 @@ class HomeSuccessScreen extends StatelessWidget {
 
             // Flash Sale Header with Countdown
             const FlashSaleCountdownWidget(),
-
+            SizedBox(height: getProportionateScreenHeight(15)),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+                horizontal: getProportionateScreenWidth(16),
+              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.7,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 16,
+              ),
+              itemCount: 2,
+              itemBuilder: (context, index) {
+                return ProductCard(product: homeData.data.topProducts[index]);
+              },
+            ),
 
             Container(margin: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(16),vertical: getProportionateScreenHeight(16)),
               child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -181,6 +198,7 @@ class HomeSuccessScreen extends StatelessWidget {
                 mainAxisSpacing: 16,
               ),
               itemCount: homeData.data.topProducts.length,
+              reverse: true,
               itemBuilder: (context, index) {
                 return ProductCard(product: homeData.data.topProducts[index]);
               },

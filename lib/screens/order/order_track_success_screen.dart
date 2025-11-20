@@ -33,9 +33,9 @@ class OrderTrackSuccessScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: getProportionateScreenHeight(25)),
-              SvgPicture.asset(orderTrack, height: getProportionateScreenHeight(100)),
-              const SizedBox(height: 24),
+
+              SvgPicture.asset(orderTrack, height: getProportionateScreenHeight(200)),
+
 
               // Order ID Card
               Container(

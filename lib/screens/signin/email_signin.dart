@@ -114,7 +114,6 @@ class EmailSignInScreen extends StatelessWidget {
               hint: 'Enter your email address',
               keyboardType: TextInputType.emailAddress,
               borderRadius: 15,
-              borderWidth: 1.5,
               focusedBorderColor: kPrimaryColor,
             ),
             const Spacer(),

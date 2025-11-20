@@ -5,6 +5,7 @@ import '../models/home_model.dart';
 import '../models/hot_pick_model.dart';
 import '../models/product_model.dart';
 import '../models/filter_model.dart';
+import '../models/related_product.dart';
 import '../repository/product_repository.dart';
 import 'api_state_provider.dart';
 
@@ -13,14 +14,13 @@ class ProductsDataProvider extends ChangeNotifier {
   final ApiStateProvider<ProductResponse> productsState = ApiStateProvider<ProductResponse>();
   final ApiStateProvider<CombinedResponse> filterState = ApiStateProvider<CombinedResponse>();
   final ApiStateProvider<HotPickResponse> hotPickState = ApiStateProvider<HotPickResponse>();
+  final ApiStateProvider<RelatedProductsResponse> relatedProductsState = ApiStateProvider<RelatedProductsResponse>();
 
   int? _lastToggledWishlistId;
   bool? _lastWishlistState;
 
   int? get lastToggledWishlistId => _lastToggledWishlistId;
   bool? get lastWishlistState => _lastWishlistState;
-
-
 
   void setLastToggledWishlist(int productId, bool isWishlisted) {
     _lastToggledWishlistId = productId;
@@ -81,6 +81,18 @@ class ProductsDataProvider extends ChangeNotifier {
   bool get hotPickHasMorePages => _hotPickHasMorePages;
   bool get hotPickIsLoadingMore => _hotPickIsLoadingMore;
 
+  // Related products pagination fields
+  int _relatedProductsCurrentPage = 1;
+  bool _relatedProductsHasMorePages = true;
+  bool _relatedProductsIsLoadingMore = false;
+  final List<Product> _relatedProducts = [];
+  Product? _currentProduct;
+
+  List<Product> get relatedProducts => _relatedProducts;
+  Product? get currentProduct => _currentProduct;
+  bool get relatedProductsHasMorePages => _relatedProductsHasMorePages;
+  bool get relatedProductsIsLoadingMore => _relatedProductsIsLoadingMore;
+
   // New filter state management
   String _selectedFilterType = 'brand';
   String get selectedFilterType => _selectedFilterType;
@@ -136,6 +148,89 @@ class ProductsDataProvider extends ChangeNotifier {
     );
 
     await fetchProducts();
+  }
+
+  // Related Products Methods
+  Future<void> fetchRelatedProducts(int productId, {bool forceRefresh = false}) async {
+    try {
+      if (forceRefresh) {
+        relatedProductsState.setLoading();
+        await _repository.clearRelatedProductsCache();
+      }
+
+      _relatedProductsCurrentPage = 1;
+      _relatedProductsHasMorePages = true;
+      _relatedProducts.clear();
+      notifyListeners();
+
+      await _repository.getRelatedProducts(
+        stateProvider: relatedProductsState,
+        productId: productId,
+        page: _relatedProductsCurrentPage,
+        forceRefresh: forceRefresh,
+      );
+
+      relatedProductsState.state.whenOrNull(
+        success: (response) {
+          _currentProduct = response.data.currentProduct;
+          _relatedProducts.addAll(response.data.relatedProducts);
+          // Assuming your API returns pagination meta
+          // Adjust based on your actual API response structure
+          _relatedProductsHasMorePages = response.data.relatedProducts.length >= 10;
+        },
+      );
+    } catch (e) {
+      debugPrint('Error fetching related products: $e');
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadMoreRelatedProducts(int productId) async {
+    if (!_relatedProductsHasMorePages || _relatedProductsIsLoadingMore) return;
+
+    try {
+      _relatedProductsIsLoadingMore = true;
+      notifyListeners();
+
+      final nextPage = _relatedProductsCurrentPage + 1;
+      final tempProvider = ApiStateProvider<RelatedProductsResponse>();
+
+      await _repository.getRelatedProducts(
+        stateProvider: tempProvider,
+        productId: productId,
+        page: nextPage,
+        forceRefresh: true,
+      );
+
+      tempProvider.state.whenOrNull(
+        success: (response) {
+          // Only add products that don't already exist
+          for (var product in response.data.relatedProducts) {
+            if (!_relatedProducts.any((p) => p.id == product.id)) {
+              _relatedProducts.add(product);
+            }
+          }
+          _relatedProductsHasMorePages = response.data.relatedProducts.length >= 10;
+          _relatedProductsCurrentPage = nextPage;
+        },
+      );
+    } catch (e) {
+      debugPrint('Error loading more related products: $e');
+    } finally {
+      _relatedProductsIsLoadingMore = false;
+      notifyListeners();
+    }
+  }
+
+  void clearRelatedProducts() {
+    _relatedProducts.clear();
+    _currentProduct = null;
+    _relatedProductsCurrentPage = 1;
+    _relatedProductsHasMorePages = true;
+    _relatedProductsIsLoadingMore = false;
+    relatedProductsState.setInitial();
+    notifyListeners();
   }
 
   // Existing product methods
@@ -292,13 +387,12 @@ class ProductsDataProvider extends ChangeNotifier {
   // Hot picks pagination methods
   Future<void> fetchHotPickData({bool forceRefresh = false}) async {
     try {
-
-        hotPickState.setLoading();
-        await clearCache();
+      hotPickState.setLoading();
+      await clearCache();
       _hotPickCurrentPage = 1;
       _hotPickHasMorePages = true;
       _hotPickProducts.clear();
-      _hotDataCleared=true;
+      _hotDataCleared = true;
       notifyListeners();
 
       await _repository.getHotPickList(
@@ -309,7 +403,6 @@ class ProductsDataProvider extends ChangeNotifier {
 
       hotPickState.state.whenOrNull(
         success: (response) {
-          // Add all products from response (list is already cleared above)
           _hotPickProducts.addAll(response.data);
           _hotPickHasMorePages = response.meta.currentPage < response.meta.lastPage;
           _hotPickCurrentPage = response.meta.currentPage;
@@ -318,7 +411,7 @@ class ProductsDataProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error fetching hot picks: $e');
     } finally {
-      _hotDataCleared=false;
+      _hotDataCleared = false;
       notifyListeners();
     }
   }
@@ -340,7 +433,6 @@ class ProductsDataProvider extends ChangeNotifier {
 
       tempProvider.state.whenOrNull(
         success: (response) {
-          // Only add products that don't already exist
           for (var product in response.data) {
             if (!_hotPickProducts.any((p) => p.id == product.id)) {
               _hotPickProducts.add(product);
@@ -456,6 +548,7 @@ class ProductsDataProvider extends ChangeNotifier {
   }
 
   void updateProductWishlistState(int productId, bool isWishListed) {
+    // Update regular products
     for (int i = 0; i < _products.length; i++) {
       if (_products[i].id == productId) {
         final updatedProduct = Product(
@@ -478,6 +571,32 @@ class ProductsDataProvider extends ChangeNotifier {
           inCart: _products[i].inCart,
         );
         _products[i] = updatedProduct;
+      }
+    }
+
+    // Update related products
+    for (int i = 0; i < _relatedProducts.length; i++) {
+      if (_relatedProducts[i].id == productId) {
+        final updatedProduct = Product(
+          id: _relatedProducts[i].id,
+          name: _relatedProducts[i].name,
+          description: _relatedProducts[i].description,
+          price: _relatedProducts[i].price,
+          sellingPrice: _relatedProducts[i].sellingPrice,
+          discountType: _relatedProducts[i].discountType,
+          discount: _relatedProducts[i].discount,
+          totalStock: _relatedProducts[i].totalStock,
+          maximumOrderQuantity: _relatedProducts[i].maximumOrderQuantity,
+          weight: _relatedProducts[i].weight,
+          viewCount: _relatedProducts[i].viewCount,
+          brand: _relatedProducts[i].brand,
+          type: _relatedProducts[i].type,
+          featuredImage: _relatedProducts[i].featuredImage,
+          productImages: _relatedProducts[i].productImages,
+          inWishlist: isWishListed,
+          inCart: _relatedProducts[i].inCart,
+        );
+        _relatedProducts[i] = updatedProduct;
       }
     }
 
@@ -525,7 +644,6 @@ class ProductsDataProvider extends ChangeNotifier {
   }
 
   void updateHotPickWishlistState(int productId, bool isWishListed) {
-    // Update _hotPickProducts
     for (int i = 0; i < _hotPickProducts.length; i++) {
       if (_hotPickProducts[i].id == productId) {
         _hotPickProducts[i] = Product(
@@ -547,11 +665,10 @@ class ProductsDataProvider extends ChangeNotifier {
           inWishlist: isWishListed,
           inCart: _hotPickProducts[i].inCart,
         );
-        break; // Exit loop after updating
+        break;
       }
     }
 
-    // Optionally update hotPickState.data (if used elsewhere)
     final currentData = hotPickState.data;
     if (currentData != null) {
       final updatedProducts = currentData.data.map((product) {
@@ -606,7 +723,6 @@ class ProductsDataProvider extends ChangeNotifier {
   }
 
   void reset() {
-
     _hotPickProducts.clear();
     _hotPickCurrentPage = 1;
     _hotPickHasMorePages = true;
@@ -624,6 +740,9 @@ class ProductsDataProvider extends ChangeNotifier {
     _filterSearchQuery = '';
     productsState.setInitial();
     filterState.setInitial();
+
+    clearRelatedProducts();
+
     notifyListeners();
   }
 }

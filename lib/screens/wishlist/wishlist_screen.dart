@@ -32,8 +32,8 @@ class _WishListScreenState extends State<WishListScreen>{
             success: (wishData) {
               if (wishData.data.isEmpty) {
                 return const NoDataScreen(
-                  title: "Wishlist Screen",
-                  subTitle: "",
+                  title: "Empty Wishlist",
+                  subTitle: "No items in your wishlist yet",
                   icon: emptyError,
                 );
               }

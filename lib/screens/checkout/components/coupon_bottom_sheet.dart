@@ -162,7 +162,7 @@ class _CouponListBottomSheetState extends State<CouponListBottomSheet> {
                       return Container(
                         margin: const EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
-                          color: kWhiteColor,
+                          color: kAppBarColor,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: InkWell(

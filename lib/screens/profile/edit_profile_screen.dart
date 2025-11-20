@@ -129,7 +129,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         focusedBorderColor: kPrimaryColor,
                         keyboardType: TextInputType.phone,
                         label: "Phone number",
-                        readOnly: true,
+                        readOnly: false,
                       ),
 
                       SizedBox(height: getProportionateScreenHeight(20)),
@@ -138,7 +138,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         focusedBorderColor: kPrimaryColor,
                         keyboardType: TextInputType.emailAddress,
                         label: "Email",
-                        readOnly: true,
+                        readOnly: false,
                       ),
 
 

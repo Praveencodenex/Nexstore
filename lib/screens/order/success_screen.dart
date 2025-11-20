@@ -117,7 +117,7 @@ class _SuccessScreenState extends State<SuccessScreen> with SingleTickerProvider
                                 height: getProportionateScreenWidth(90), // Slightly smaller container
                                 width: getProportionateScreenWidth(90),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF009688), // Teal color
+                                  color: kPrimaryColor, // Teal color
                                   shape: BoxShape.circle,
                                   border: Border.all(color: const Color(0xFF008276), width: 2),
                                 ),

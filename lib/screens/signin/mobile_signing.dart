@@ -117,9 +117,8 @@ class MobileLoginScreen extends StatelessWidget {
                 LengthLimitingTextInputFormatter(10),
               ],
               borderRadius: 15,
-              borderWidth: 1.5,
               focusedBorderColor: kPrimaryColor,
-                focusedBorderWidth:1.5
+
             ),
             const Spacer(),
             Padding(

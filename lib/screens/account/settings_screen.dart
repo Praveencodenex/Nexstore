@@ -331,11 +331,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onTap: () => _handleTermsConditions("https://thenexstore.com/terms-and-conditions"),
                 ),
 
-                _buildSettingsItem(
+                /*_buildSettingsItem(
                   icon: Icons.language,
                   title: 'Language',
                   onTap: () => _showLanguageBottomSheet(),
-                ),
+                ),*/
                 _buildSettingsItem(
                   icon: Icons.support_agent_outlined,
                   title: 'Support & Contact',
@@ -356,7 +356,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
 
-          const SizedBox(height: 30),
+          const SizedBox(height: 100),
         ],
       ),
     );

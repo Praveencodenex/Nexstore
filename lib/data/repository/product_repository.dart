@@ -5,6 +5,7 @@ import '../helper/dio_client.dart';
 import '../models/filter_model.dart';
 import '../models/hot_pick_model.dart';
 import '../models/product_model.dart';
+import '../models/related_product.dart';
 import '../providers/api_state_provider.dart';
 
 class ProductRepository {
@@ -85,6 +86,26 @@ class ProductRepository {
     );
   }
 
+  Future<void> getRelatedProducts({
+    required ApiStateProvider<RelatedProductsResponse> stateProvider,
+    bool forceRefresh = false,
+    required int productId ,
+    int page = 1,
+  }) async {
+    await _apiService.get<RelatedProductsResponse>(
+      endpoint: 'products/$productId/related',
+      stateProvider: stateProvider,
+      queryParameters: {
+        'current_page': page,
+      },
+      extra: {'cacheKey': "related_product"},
+      fromJson: (json) => RelatedProductsResponse.fromJson(json),
+      cachePolicy: forceRefresh ? CachePolicy.refresh : CachePolicy.refreshForceCache,
+      enableAutoRetry: true,
+    );
+  }
+
+
   Future<void> getFilters({
     required ApiStateProvider<CombinedResponse> stateProvider,
     required String filterType,
@@ -142,6 +163,13 @@ class ProductRepository {
   Future<void> clearHotPickCache() async {
     try {
       await DioClient.instance.clearCache('hot_pick_data');
+    } catch (e) {
+      debugPrint('Clear cache error: $e');
+    }
+  }
+  Future<void> clearRelatedProductsCache() async {
+    try {
+      await DioClient.instance.clearCache('related_product');
     } catch (e) {
       debugPrint('Clear cache error: $e');
     }

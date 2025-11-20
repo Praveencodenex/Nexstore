@@ -49,7 +49,7 @@ class _OrderScreenState extends State<OrderScreen> {
               hasMore: provider.hasMorePages,
               isLoadingMore: provider.isLoadingMore,
               emptyWidget: const NoDataScreen(
-                title: "No Orders",
+                title: "Empty Orders",
                 subTitle: "You haven't placed any orders yet",
                 icon: emptyError,
               ),
