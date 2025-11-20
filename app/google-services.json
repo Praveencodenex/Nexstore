@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "403308051319",
+    "project_id": "thenexstore-1ebc5",
+    "storage_bucket": "thenexstore-1ebc5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:403308051319:android:1093e9bf8a041612d6ff72",
+        "android_client_info": {
+          "package_name": "com.codenex.thenexstore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW8ul_nFvKe_wPKZExheMooWIWtvUOcR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
